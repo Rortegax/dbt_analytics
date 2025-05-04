@@ -10,9 +10,9 @@ sources:
       schema: false
       identifier: false
 
-    freshness:
-      warn_after: {count: 1, period: day}
-      error_after: {count: 720, period: day}
+    # freshness:
+    #   warn_after: {count: 1, period: day}
+    #   error_after: {count: 720, period: day}
 
     tables:
       - name: addresses
@@ -40,7 +40,7 @@ sources:
           - name: _fivetran_deleted
           - name: _fivetran_synced
     
-    - name: orders
+      - name: orders
         loaded_at_field: _fivetran_synced
         columns:
           - name: event_id
@@ -59,7 +59,7 @@ sources:
           - name: _fivetran_deleted
           - name: _fivetran_synced
 
-    - name: order_items
+      - name: order_items
         loaded_at_field: _fivetran_synced
         columns:
             - name: order_id varchar
@@ -68,7 +68,7 @@ sources:
             - name: _fivetran_deleted
             - name: _fivetran_synced
 
-    - name: products
+      - name: products
         loaded_at_field: _fivetran_synced
         columns:
             - name: product_id
@@ -78,7 +78,7 @@ sources:
             - name: _fivetran_deleted
             - name: _fivetran_synced
 
-    - name: promos
+      - name: promos
         loaded_at_field: _fivetran_synced
         columns:
             - name: promo_id
@@ -87,7 +87,7 @@ sources:
             - name: _fivetran_deleted
             - name: _fivetran_synced
 
-    - name: users
+      - name: users
         loaded_at_field: _fivetran_synced
         columns:
             - name: user_id

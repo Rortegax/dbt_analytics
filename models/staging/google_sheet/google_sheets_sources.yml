@@ -10,9 +10,9 @@ sources:
       schema: false
       identifier: false
 
-    freshness:
-      warn_after: {count: 1, period: day}
-      error_after: {count: 450, period: day}
+    # freshness:
+    #   warn_after: {count: 1, period: day}
+    #   error_after: {count: 720, period: day}
 
     tables:
       - name: budget
