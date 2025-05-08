@@ -7,16 +7,6 @@
 WITH src_products AS (
     SELECT * 
     FROM {{ source('sql_server_dbo', 'products') }}
-
-    UNION ALL
-
-    SELECT
-       'no product' AS product_id,
-       0.0 AS price,
-       'no product' AS name,
-       0 AS inventory,
-       NULL AS date_delete,
-       CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP) AS date_load
     ),
 
 products_output AS (
