@@ -5,7 +5,7 @@ sources:
     description: 
         "Sources from Schema sql_server_dbo"
     schema: sql_server_dbo
-    database: ALUMNO29_DEV_BRONZE_DB
+    database: "{{ env_var('DBT_ENVIRONMENTS') }}_BRONZE_DB"
 
     quoting:
       database: false

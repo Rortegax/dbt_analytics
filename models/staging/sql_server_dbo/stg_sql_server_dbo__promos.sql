@@ -17,7 +17,7 @@ WITH src_promos AS (
         , 0 AS discount
         , 'inactive' AS status
         , null AS _fivetran_deleted
-        , CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP) AS _fivetran_synced
+        ,  CURRENT_TIMESTAMP AS _fivetran_synced
     
 ),
 
@@ -28,7 +28,7 @@ promos_output AS (
         , discount::FLOAT AS discounted_quantity
         , status::VARCHAR AS status
         , _fivetran_deleted::BOOLEAN AS is_deleted
-        , CONVERT_TIMEZONE('UTC', _fivetran_synced)::TIMESTAMP AS date_loaded
+        , CONVERT_TIMEZONE('{{var('timezone')}}', _fivetran_synced)::TIMESTAMP AS date_loaded
     FROM src_promos
 )
 

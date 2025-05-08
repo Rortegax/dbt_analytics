@@ -11,6 +11,7 @@ packages:
   - name: dbt_date
     package: godatadriven/dbt_date
     version: 0.12.0
+  # Buscar paquete Evaluator
 sha1_hash: ef017c9e5e6d3ff86ae392b3ebaf2dc13f336362
 
 
