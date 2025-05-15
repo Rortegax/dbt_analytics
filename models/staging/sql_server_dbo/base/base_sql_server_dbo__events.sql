@@ -6,7 +6,7 @@ SELECT
     user_id,
     product_id,
     order_id,
-    session_id,
+    {{ dbt_utils.generate_surrogate_key(['session_id']) }} AS session_id,
     created_at,
     {{ format_fivetran_fields('_fivetran_deleted', '_fivetran_synced') }}
 FROM {{ source('sql_server_dbo', 'events') }}
