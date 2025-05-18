@@ -1,0 +1,129 @@
+version: 2
+
+# DATA CONTRACTS FOR MODELS
+models:
+  
+  - name: stg_sql_server_dbo__promos
+    config:
+      # materialized: table
+      contract:
+        enforced: true
+      meta:
+        surrogate_key: true
+    description: >
+      Contains data describing currently available promotions.
+    columns:
+      - name: promo_id
+        data_type: text
+        constraints:
+          - type: not_null
+        description: >
+          The main ID for each promo. Contains the promo name.
+        tests:
+          - unique
+          - not_null
+          
+      - name: promo_desc
+        data_type: text
+        constraints:
+          - type: not_null
+        description: >
+          Description text for each promo.
+        tests:
+          - not_null
+
+      - name: discounted_quantity
+        data_type: numeric(38,2)
+        description: >
+          The discount percentage applied by the promo.
+        tests:
+          - not_null
+
+      - name: status
+        data_type: text
+        description: >
+          Current status for the promo: active | inactive.
+        tests:
+          - not_null
+
+      - name: is_deleted
+        data_type: boolean
+        description: >
+          The date in which the data was deleted from the source DB.
+
+      - name: date_loaded
+        data_type: TIMESTAMP_TZ
+        description: >
+          The date in which this data was last synced.
+        tests:
+          - not_null
+  
+  - name: stg_sql_server_dbo__users
+    description: "Modelo de staging que transforma los datos de usuarios provenientes de Bronze."
+    config:
+      contract:
+        enforced: true
+      meta:
+        surrogate_key: true
+
+    columns:
+      - name: user_id
+        description: "Identificador único de usuario hasheado."
+        data_type: text
+        constraints:
+          - type: not_null
+        tests:
+          - unique
+          - not_null
+
+      - name: first_name
+        description: "Nombre del usuario."
+        data_type: text
+        tests:
+          - not_null
+
+      - name: last_name
+        description: "Apellido del usuario."
+        data_type: text
+        tests:
+          - not_null
+
+      - name: address_id
+        description: "Identificador hasheado de la dirección del usuario."
+        data_type: text
+        tests:
+          - not_null
+
+      - name: phone_number
+        description: "Número de teléfono del usuario."
+        data_type: text
+        tests:
+          - not_null
+
+      - name: email
+        description: "Correo electrónico del usuario."
+        data_type: text
+        tests:
+          - not_null
+
+      - name: created_at
+        description: "Fecha de creación del usuario."
+        data_type: date
+        tests:
+          - not_null
+
+      - name: updated_at
+        description: "Fecha de última actualización del usuario."
+        data_type: date
+        tests:
+          - not_null
+
+      - name: is_deleted
+        description: "Campo de sincronización de Fivetran, formateado con format_fivetran_fields."
+        data_type: boolean
+
+      - name: date_loaded
+        description: "Campo de eliminación de Fivetran, formateado con format_fivetran_fields."
+        data_type: TIMESTAMP_TZ
+        tests:
+          - not_null

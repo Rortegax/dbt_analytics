@@ -10,7 +10,8 @@ SELECT
     page_url,
     user_id,
     session_id,
-    CONVERT_TIMEZONE('{{var('timezone')}}', created_at::TIMESTAMP) AS created_at, -- Pensar si hacer un macro
+    created_at::DATE AS created_at,
+    created_at AS created_at_timestamp,
     is_deleted,
     date_loaded
 FROM base

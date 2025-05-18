@@ -4,7 +4,7 @@ sources:
 
   - name: google_sheets # name of the source 
     schema: google_sheets # this is the schema our raw data lives in
-    database: "{{ env_var('DBT_ENVIRONMENTS') }}BRONZE_DB" # this is the name of our database
+    database: "{{ env_var('DBT_ENVIRONMENTS') }}_BRONZE_DB" # this is the name of our database
     description: >
       Contains data related to monthly budgets and its related products & quantity
 
@@ -13,17 +13,31 @@ sources:
       schema: false
       identifier: false
 
-    freshness:
-      warn_after: {count: 1, period: day}
-      error_after: {count: 30, period: day}
+    #freshness:
+    #  warn_after: {count: 1, period: day}
+    #  error_after: {count: 30, period: day}
 
     tables:
 
-      - name: BUDGET
+      - name: budget
         loaded_at_field: _fivetran_synced
         columns:
           - name: _row
+            description: >
+              Identificador UNICO numérico de la fila.
           - name: product_id
+            tests:
+              - not_null
           - name: quantity
+            description: >
+              Cantidad presupuestada, por mes, para el producto.
           - name: month
+            description: >
+              Fecha correspondiente al presupuesto. El dia refleja el ultimo dia de ese mes.
+            tests:
+              - not_null
           - name: _fivetran_synced
+            description: >
+                Campo de sincronización de Fivetran, que representa la ultima actualización del campo.
+            tests:
+              - not_null

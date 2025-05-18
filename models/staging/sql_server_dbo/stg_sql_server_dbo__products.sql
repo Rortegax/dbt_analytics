@@ -1,23 +1,16 @@
-{{
-  config(
-    materialized='view'
-  )
-}}
-
 WITH src_products AS (
     SELECT * 
     FROM {{ source('sql_server_dbo', 'products') }}
     ),
 
-products_output AS (
+renamed_casted AS (
     SELECT
-        {{ dbt_utils.generate_surrogate_key(['product_id']) }} AS product_id,
-        price::FLOAT AS price,
-        name::VARCHAR AS name,
-        inventory::INT AS inventory,
-        _fivetran_deleted::BOOLEAN AS is_deleted,
-        CONVERT_TIMEZONE('UTC', _fivetran_synced::TIMESTAMP) AS date_loaded
+        {{ dbt_utils.generate_surrogate_key(['product_id']) }} AS product_id
+        , price::numeric(38,2) AS price
+        , name::VARCHAR AS name
+        , inventory::INT AS inventory
+        , {{ format_fivetran_fields('_fivetran_synced', '_fivetran_deleted') }}
     FROM src_products
     )
 
-SELECT * FROM products_output
+SELECT * FROM renamed_casted

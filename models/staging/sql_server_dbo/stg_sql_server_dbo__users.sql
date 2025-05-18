@@ -5,22 +5,24 @@ WITH src_users AS (
 
 ),
 
-renamed as (
+renamed_casted as (
 
     SELECT
-        {{ dbt_utils.generate_surrogate_key(['promo_id']) }} AS user_id::,
-        CONVERT_TIMEZONE('{{var('timezone')}}', updated_at)::TIMESTAMP AS updated_at,
-        address_id::VARCHAR AS address_id,
-        last_name::VARCHAR AS last_name,
-        CONVERT_TIMEZONE('{{var('timezone')}}', created_at)::TIMESTAMP AS created_at,
-        phone_number::VARCHAR, -- Test telefono (regex)
+        {{ dbt_utils.generate_surrogate_key(['user_id']) }} AS user_id
+        , first_name::VARCHAR AS first_name
+        , last_name::VARCHAR AS last_name
+        , {{ dbt_utils.generate_surrogate_key(['address_id']) }} AS address_id
+        , phone_number::VARCHAR AS phone_number
+        --, validate_phone('phone_number')
+        , email::VARCHAR AS email
+        --, validate_email('email')
+        , created_at::DATE AS created_at
+        , updated_at::DATE AS updated_at
         -- total_orders::INT AS total_orders, TODOS LOS REGISTROS SON NULOS, ASI QUE NO LA LLEVAMOS A STAGING
-        first_name::VARCHAR,
-        email::VARCHAR,
-        {{ format_fivetran_columns('_fivetran_deleted','_fivetran_synced') }}
+        , {{ format_fivetran_fields('_fivetran_synced','_fivetran_deleted') }}
 
-    FROM source
+    FROM src_users
     
 )
 
-SELECT * FROM renamed
+SELECT * FROM renamed_casted

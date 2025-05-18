@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: stg_google_sheets__budget
+    description: "Modelo de capa staging que transforma los datos de presupuesto provenientes de Google Sheets."
+    columns:
+      - name: id_budget
+        description: "Identificador UNICO numérico de la fila."
+        tests:
+          - unique
+          - not_null
+
+      - name: quantity
+        description: "Cantidad presupuestada por mes para el producto."
+        tests:
+          - not_null
+
+      - name: date
+        description: "Fecha correspondiente al presupuesto. El dia refleja el ultimo dia de ese mes."
+        tests:
+          - not_null
+
+      - name: year
+        description: "Año extraído de la fecha del presupuesto."
+        tests:
+          - not_null
+
+      - name: month
+        description: "Mes numerico extraído de la fecha del presupuesto."
+        tests:
+          - not_null
+
+      - name: month_name
+        description: "Nombre del mes extraído de la fecha del presupuesto."
+        tests:
+          - not_null
+
+      - name: product_id
+        description: "Identificador único del producto hasheado."
+        tests:
+          - not_null
+
+      - name: date_loaded
+        description: "Campo de sincronización de Fivetran, formateado a traves de la macro format_fivetran_fields."
+        tests:
+          - not_null

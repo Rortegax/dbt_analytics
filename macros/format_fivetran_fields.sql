@@ -14,12 +14,16 @@ hah       '(  (..-'
 
 */
 
-{% macro format_fivetran_fields(synced, deleted = None) %}
-  {% if deleted is not none %}
-    {{ deleted }}::BOOLEAN AS is_deleted,
-  {% endif %}
-  CONVERT_TIMEZONE('{{ var('project_timezone')}}', {{ synced }}::TIMESTAMP) AS date_loaded
-{% endmacro %}
+    {% macro format_fivetran_fields(synced, deleted = None) %}
+        {% if deleted is not none %}
+            {% if deleted %}
+                COALESCE({{ deleted }}, FALSE) AS is_deleted,
+            {% else %}
+                False AS is_deleted, 
+            {% endif %}
+        {% endif %}
+        CONVERT_TIMEZONE('{{ var('timezone')}}', {{ synced }}::TIMESTAMP) AS date_loaded
+    {% endmacro %}
 
 /*
 Ejemplos de llamada:

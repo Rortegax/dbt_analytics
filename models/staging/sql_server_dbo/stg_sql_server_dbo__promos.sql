@@ -5,7 +5,7 @@ WITH src_promos AS (
 
     UNION ALL
 
-    -- Insert a new no_promo row
+    -- Insertamos una promo para cuando haya ordenes sin ella 'no_promo'
     SELECT 
         'no_promo' AS promo_id
         , 0 AS discount
@@ -19,10 +19,9 @@ promos_output AS (
     SELECT
         {{ dbt_utils.generate_surrogate_key(['promo_id']) }} AS promo_id -- Generate a surrogate key (hash) to better identify PROMOS
         , promo_id::VARCHAR AS promo_desc
-        , discount::FLOAT AS discounted_quantity
+        , discount::NUMERIC(38,2) AS discounted_quantity
         , status::VARCHAR AS status
-        , _fivetran_deleted::BOOLEAN AS is_deleted
-        , CONVERT_TIMEZONE('{{var('timezone')}}', _fivetran_synced)::TIMESTAMP AS date_loaded
+        , {{ format_fivetran_fields('_fivetran_synced', '_fivetran_deleted') }}
     FROM src_promos
 )
 
