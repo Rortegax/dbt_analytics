@@ -1,35 +1,29 @@
-/* No establecemos una configuracion de base, ya que va a ser una vista y esa viene por defecto 
-{{
-  config(
-    materialized='table'
-  )
-}}
-*/
-
--- CTE rara antes de los casteos, por si tenemos que referenciar varias veces los datos
-WITH stg_orders AS (
+ -- CTE rara antes de los casteos, para poder acceder a los datos de las fuentes
+WITH src_orders AS (
     SELECT * 
     FROM {{ source('sql_server_dbo', 'orders') }} -- Codigo JINJA(TAKATAKA)
 ),
 
 renamed_casted AS (
     SELECT
-        order_id, 
-        shipping_service,
-        shipping_cost_usd,
-        address_id,
-        created_at_utc,
-        promo_id,
-        estimated_delivery_at_utc,
-        item_order_cost_usd,
-        user_id,
-        total_order_cost_usd,
-        delivered_at_utc,
-        tracking_id,
-        status_order,
-        DATEDIFF(day, created_at_utc, delivered_at_utc) AS days_to_deliver,
-        date_load
-    FROM stg_orders
-    )
+        {{ dbt_utils.generate_surrogate_key(['order_id']) }} AS order_id
+        , shipping_service::VARCHAR AS shipping_service
+        , shipping_cost::NUMERIC(38,2) AS shipping_cost
+        , {{ dbt_utils.generate_surrogate_key(['address_id']) }} AS address_id
+        , {{ dbt_utils.generate_surrogate_key(['promo_id']) }} AS promo_id
+        , created_at::DATE AS created_at -- Nuevo campo para created_at, que es solo de tipo date
+        , {{ format_dates('created_at', var('timezone')) }} AS created_at_timestamp
+        , estimated_delivery_at::DATE AS estimated_delivery_at -- Nuevo campo para estimated_delivery, que es solo de tipo date
+        , {{ format_dates('estimated_delivery_at', var('timezone')) }} AS estimated_delivery_at_timestamp
+        , order_cost::NUMERIC(38,2) AS order_cost
+        , {{ dbt_utils.generate_surrogate_key(['user_id']) }} AS user_id
+        , order_total::NUMERIC(38,2) AS order_total
+        , delivered_at::DATE AS delivered_at
+        , {{ format_dates('delivered_at', var('timezone')) }} AS delivered_at_timestamp
+        , tracking_id::VARCHAR AS tracking_id
+        , status::VARCHAR AS status
+        , {{ format_fivetran_fields('_fivetran_synced', '_fivetran_deleted') }}
+    FROM src_orders
+)
 
 SELECT * FROM renamed_casted
