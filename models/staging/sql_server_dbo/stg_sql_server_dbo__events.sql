@@ -10,7 +10,7 @@ SELECT
     page_url,
     user_id,
     session_id,
-    created_at::DATE AS created_at,
+    created_at::DATE AS created_at_date,
     created_at AS created_at_timestamp,
     is_deleted,
     date_loaded

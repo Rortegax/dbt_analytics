@@ -44,6 +44,13 @@ models:
         +schema: google_sheets
       sql_server_dbo:
         +schema: sql_server_dbo
+    marts:
+      +materialized: table
+      +database: "{{ env_var('DBT_ENVIRONMENTS') }}_GOLD_DB"
+      core:
+        +schema: core
+      sql_server_dbo:
+        +schema: sql_server_dbo
       
 
 vars:

@@ -11,7 +11,7 @@ renamed_casted AS (
         , shipping_cost::NUMERIC(38,2) AS shipping_cost
         , {{ dbt_utils.generate_surrogate_key(['address_id']) }} AS address_id
         , {{ dbt_utils.generate_surrogate_key(['promo_id']) }} AS promo_id
-        , created_at::DATE AS created_at -- Nuevo campo para created_at, que es solo de tipo date
+        , created_at::DATE AS created_at_date -- Nuevo campo para created_at, que es solo de tipo date
         , {{ format_dates('created_at', var('timezone')) }} AS created_at_timestamp
         , estimated_delivery_at::DATE AS estimated_delivery_at -- Nuevo campo para estimated_delivery, que es solo de tipo date
         , {{ format_dates('estimated_delivery_at', var('timezone')) }} AS estimated_delivery_at_timestamp
@@ -26,4 +26,4 @@ renamed_casted AS (
     FROM src_orders
 )
 
-SELECT * FROM renamed_casted
+SELECT * FROM renamed_casted ORDER BY created_at DESC
