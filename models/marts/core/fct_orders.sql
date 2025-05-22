@@ -22,7 +22,7 @@ fct_orders AS (
         o.user_id,
         o.address_id,
         o.status AS actual_status,
-        o.created_at AS order_date,
+        o.created_at_date AS order_date,
         o.created_at_timestamp AS order_timestamp,
         o.estimated_delivery_at AS estimated_delivery_date,
         o.estimated_delivery_at_timestamp AS estimated_delivery_timestamp,
@@ -33,10 +33,11 @@ fct_orders AS (
         oi.product_id,
         oi.product_quantity AS line_quantity,
         p.product_price AS line_unit_price,
-        oi.product_quantity * p.product_price AS line_extended_price,
+        {{ calculate_extended_cost('oi.product_quantity','p.product_price') }} AS line_extended_price,
         o.order_cost,
         o.shipping_cost,
-        o.order_total,
+        o.order_cost + o.shipping_cost AS order_total,
+        o.order_total AS source_order_total,
         o.is_deleted AS order_deleted,
         oi.is_deleted AS order_line_delete
 
@@ -45,6 +46,7 @@ fct_orders AS (
         ON oi.order_id = o.order_id
     INNER JOIN stg_products AS p
         ON oi.product_id = p.product_id
+    ORDER BY order_id, order_timestamp
     )
 
 SELECT * FROM fct_orders

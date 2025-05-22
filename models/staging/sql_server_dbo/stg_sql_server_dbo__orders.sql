@@ -7,7 +7,7 @@ WITH src_orders AS (
 renamed_casted AS (
     SELECT
         {{ dbt_utils.generate_surrogate_key(['order_id']) }} AS order_id
-        , shipping_service::VARCHAR AS shipping_service
+        , COALESCE(NULLIF(shipping_service, ''), 'unassigned')::VARCHAR AS shipping_service
         , shipping_cost::NUMERIC(38,2) AS shipping_cost
         , {{ dbt_utils.generate_surrogate_key(['address_id']) }} AS address_id
         , {{ dbt_utils.generate_surrogate_key(['promo_id']) }} AS promo_id
@@ -26,4 +26,4 @@ renamed_casted AS (
     FROM src_orders
 )
 
-SELECT * FROM renamed_casted ORDER BY created_at DESC
+SELECT * FROM renamed_casted

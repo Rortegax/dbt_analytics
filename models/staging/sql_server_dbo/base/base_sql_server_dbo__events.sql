@@ -7,7 +7,7 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['product_id']) }} AS product_id,
     {{ dbt_utils.generate_surrogate_key(['order_id']) }} AS order_id,
     {{ dbt_utils.generate_surrogate_key(['session_id']) }} AS session_id,
-    {{ format_dates('created_at', var('timezone')) }} AS created_at,
+    TO_CHAR(created_at, 'YYYY-DD-MM') AS created_at,
+    CONVERT_TIMEZONE('{{ var('timezone') }}', TO_CHAR(created_at, 'YYYY-DD-MM HH24:MI:SS')) AS created_at_timestamp,
     {{ format_fivetran_fields('_fivetran_synced', '_fivetran_deleted') }}
 FROM {{ source('sql_server_dbo', 'events') }}
-ORDER BY created_at

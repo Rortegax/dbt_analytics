@@ -13,9 +13,9 @@ WITH stg_orders AS (
 aggregated_users AS (
     SELECT
         user_id,
-        COUNT(order_id) AS total_orders, -- Cantidad de pedidos por usuario
-        SUM(order_total) AS total_spent, -- Gasto total por usuario
-        AVG(order_total) AS avg_spent_per_order -- Gasto promedio por pedido
+        COUNT(order_total) AS total_orders, -- Cantidad de pedidos por usuario
+        SUM(order_total)::NUMERIC(38,2) AS total_spent, -- Gasto total por usuario
+        AVG(order_total)::NUMERIC(38,2) AS avg_spent_per_order -- Gasto promedio por pedido
     FROM stg_orders
     GROUP BY user_id
 )

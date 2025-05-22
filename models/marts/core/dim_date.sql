@@ -8,8 +8,8 @@
 WITH date_spine AS (
   {{ dbt_utils.date_spine(
     datepart="day",
-    start_date="cast('2018-01-01' as date)",
-    end_date="DATEADD(year, 3, CURRENT_DATE)"
+    start_date="cast('2021-02-01' as date)",
+    end_date="DATEADD(year, 1, CURRENT_DATE)"
   ) }}
 ),
 
@@ -22,17 +22,32 @@ filtered_spine AS (
 )
 
 SELECT
-  date_day AS date,
-  YEAR(date_day) AS year,
-  EXTRACT(MONTH FROM date_day) AS month,
-  EXTRACT(DAY FROM date_day) AS day,
-  TO_CHAR(date_day, 'Day') AS day_name,
-  EXTRACT(DAYOFWEEK FROM date_day) AS day_of_week,
-  EXTRACT(DAYOFYEAR FROM date_day) AS day_of_year,
-  EXTRACT(WEEK FROM date_day) AS week,
-  EXTRACT(QUARTER FROM date_day) AS quarter,
-  CASE 
-    WHEN EXTRACT(DAYOFWEEK FROM date_day) IN (1, 7) THEN TRUE
-    ELSE FALSE
-  END AS is_weekend
+  date_day AS date
+  , YEAR(date_day) AS year
+  , MONTH(date_day) AS month
+  , DAY(date_day) AS day
+  , CASE EXTRACT(DAYOFWEEK FROM date_day)
+     WHEN 0 THEN 'Sunday'
+     WHEN 1 THEN 'Monday'
+     WHEN 2 THEN 'Tuesday'
+     WHEN 3 THEN 'Wednesday'
+     WHEN 4 THEN 'Thursday'
+     WHEN 5 THEN 'Friday'
+     WHEN 6 THEN 'Saturday'
+    END AS day_name
+  , {{ dbt_date.month_name('date_day', short=False) }} AS month_name
+  , COALESCE(NULLIF(EXTRACT(DAYOFWEEK FROM date_day), '0'), '7') AS day_of_week
+  , EXTRACT(DAYOFYEAR FROM date_day) AS day_of_year
+  , EXTRACT(WEEK FROM date_day) AS week
+  , EXTRACT(QUARTER FROM date_day) AS quarter
+  , CASE EXTRACT(QUARTER FROM date_day)
+     WHEN 1 THEN 'First'
+     WHEN 2 THEN 'Second'
+     WHEN 3 THEN 'Third'
+     WHEN 4 THEN 'Fourth'
+    END AS quarter_name
+  , CASE 
+     WHEN EXTRACT(DAYOFWEEK FROM date_day) IN (6, 0) THEN TRUE
+     ELSE FALSE
+    END AS is_weekend
 FROM filtered_spine
