@@ -1,7 +1,5 @@
 version: 2
 
-version: 2
-
 models:
   - name: fct_orders
     description: Fact table for orders
